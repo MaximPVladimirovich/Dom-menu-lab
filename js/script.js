@@ -33,7 +33,7 @@ let menuLinks = [
     ]
   },
   {
-    text: 'orders', 
+    text: 'orders',
     href: '#',
     subLinks: [
       { text: 'new', href: '/orders/new' },
@@ -42,7 +42,7 @@ let menuLinks = [
     ]
   },
   {
-    text: 'account', 
+    text: 'account',
     href: '#',
     subLinks: [
       { text: 'profile', href: '/account/profile' },
@@ -56,8 +56,8 @@ for (let link of menuLinks) {
   a.textContent = link.text;
   a.setAttribute(`href`, link.href);
   topMenuEl.appendChild(a);
+  a.subLinks = link.subLinks;
 }
-
 
 //Task 4
 let subMenuEl = document.getElementById(`sub-menu`);
@@ -74,27 +74,66 @@ let topMenuLinks = document.querySelectorAll(`a`);
 let showingSubMenu = false;
 
 //Event Listeners
-topMenuEl.addEventListener(`click`, handleClick)
+topMenuEl.addEventListener(`click`, handleTopMenuClick)
+subMenuEl.addEventListener(`click`, handleSubMenuClick)
 
 // Functions
-function handleClick(e) {
+function handleTopMenuClick(e) {
   e.preventDefault();
   if (e.target.matches(`a`)) {
-    e.target.classList.remove(`active`)
+    if (e.target.classList.contains(`active`)) {
+      e.target.classList.remove(`active`)
+      showingSubMenu = false;
+      subMenuEl.style.setProperty(`top`, `0`);
+    }
+    for (let i = 0; i < topMenuLinks.length; i++) {
+      topMenuLinks[i].classList.remove(`active`)
+    }
+    console.log(e.target.textContent)
+
+  }
+  e.target.classList.add(`active`);
+
+  if (e.target.subLinks) {
+    showingSubMenu = true;
+    if (showingSubMenu) {
+      buildSubMenu(e.target.subLinks)
+      subMenuEl.style.setProperty(`top`, `100%`);
+    }
+    else {
+      showingSubMenu = false
+    }
+  } else {
+    showingSubMenu = false
+    subMenuEl.style.setProperty(`top`, `0`)
+  }
+  return;
+}
+function handleSubMenuClick(e) {
+  e.preventDefault();
+  if (e.target.matches(`a`)) {
+    console.log(e.target.textContent)
     showingSubMenu = false;
     subMenuEl.style.setProperty(`top`, `0`);
     for (let i = 0; i < topMenuLinks.length; i++) {
       topMenuLinks[i].classList.remove(`active`)
     }
-    e.target.classList.add(`active`);
+    mainEl.innerHTML = `<h1>${e.target.textContent.toUpperCase()}</h1>`;
     
-    }
-    return;
+    return
   }
+}
+function buildSubMenu(arr) {
+  subMenuEl.innerHTML = null;
+  for (let link of arr) {
+    let aTag = document.createElement(`a`);
+    aTag.setAttribute(`href`, link.href);
+    aTag.textContent = link.text;
+    subMenuEl.appendChild(aTag);
+  }
+}
 
 
-
-  // function
 
 
 
